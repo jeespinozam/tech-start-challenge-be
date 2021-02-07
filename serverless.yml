@@ -1,0 +1,42 @@
+service: tech-start-challenge-be
+
+useDotenv: true
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+
+# Add the serverless-webpack plugin
+plugins:
+  - serverless-webpack
+  - serverless-offline
+  - serverless-dotenv-plugin
+  - serverless-aws-documentation
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage, dev}
+  region: us-west-2
+  profile: techStartChallenge
+  apiGateway:
+    minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
+    shouldStartNameWithService: true
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+  lambdaHashingVersion: 20201221
+
+functions:
+  report:
+    handler: handler.report
+    events:
+      - http:
+          method: get
+          path: report
+  etl:
+    handler: handler.etl
+    events:
+      - http:
+          method: get
+          path: etl
